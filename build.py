@@ -73,7 +73,6 @@ def main():
     OUT.mkdir(exist_ok=True)
     shutil.copy(ROOT / "static" / "index.html", OUT / "index.html")
     (OUT / "news.json").write_text(json.dumps(data, separators=(",", ":")))
-    (OUT / ".nojekyll").write_text("")
     print(f"Wrote {OUT}/ ({(OUT / 'news.json').stat().st_size // 1024} KB of news)")
 
     if not data["articles"]:

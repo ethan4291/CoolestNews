@@ -1,0 +1,186 @@
+{
+  "_comment": "'homepage' = the site's front page; NewsHub reads it so stories appear in the same order as on the real site. Sites that block this (NYT, WSJ, Washington Post, Politico, ESPN) use their first feed's order instead. 'via_google' feeds come from Google News because the outlet no longer publishes working RSS. 'frontpage_order': 'newest' ranks a blocked site's stories newest-first across all its feeds (used where the outlet has no homepage feed); otherwise its first feed's own order is used. A feed can set its own 'via_google': true.",
+  "sources": [
+    {
+      "id": "nyt",
+      "name": "New York Times",
+      "color": "#111111",
+      "feeds": [
+        {"category": "Top", "url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"},
+        {"category": "World", "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"},
+        {"category": "US", "url": "https://rss.nytimes.com/services/xml/rss/nyt/US.xml"},
+        {"category": "Politics", "url": "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml"},
+        {"category": "Business", "url": "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"},
+        {"category": "Tech", "url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml"},
+        {"category": "Science", "url": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml"},
+        {"category": "Sports", "url": "https://rss.nytimes.com/services/xml/rss/nyt/Sports.xml"}
+      ]
+    },
+    {
+      "id": "cnn",
+      "name": "CNN",
+      "color": "#cc0000",
+      "via_google": true,
+      "feeds": [
+        {"category": "Top", "url": "https://news.google.com/rss/search?q=site:cnn.com+when:1d&hl=en-US&gl=US&ceid=US:en"}
+      ],
+      "homepage": "https://www.cnn.com/"
+    },
+    {
+      "id": "bbc",
+      "name": "BBC News",
+      "color": "#bb1919",
+      "feeds": [
+        {"category": "Top", "url": "https://feeds.bbci.co.uk/news/rss.xml"},
+        {"category": "World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml"},
+        {"category": "Business", "url": "https://feeds.bbci.co.uk/news/business/rss.xml"},
+        {"category": "Tech", "url": "https://feeds.bbci.co.uk/news/technology/rss.xml"},
+        {"category": "Science", "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"}
+      ],
+      "homepage": "https://www.bbc.com/news"
+    },
+    {
+      "id": "npr",
+      "name": "NPR",
+      "color": "#2a4b8d",
+      "feeds": [
+        {"category": "Top", "url": "https://feeds.npr.org/1001/rss.xml"},
+        {"category": "Politics", "url": "https://feeds.npr.org/1014/rss.xml"}
+      ],
+      "homepage": "https://www.npr.org/"
+    },
+    {
+      "id": "wapo",
+      "name": "Washington Post",
+      "color": "#231f20",
+      "feeds": [
+        {"category": "US", "url": "https://feeds.washingtonpost.com/rss/national"},
+        {"category": "World", "url": "https://feeds.washingtonpost.com/rss/world"},
+        {"category": "Politics", "url": "https://feeds.washingtonpost.com/rss/politics"},
+        {"category": "Business", "url": "https://feeds.washingtonpost.com/rss/business"},
+        {"category": "Tech", "url": "https://feeds.washingtonpost.com/rss/business/technology"}
+      ],
+      "frontpage_order": "newest"
+    },
+    {
+      "id": "wsj",
+      "name": "Wall Street Journal",
+      "color": "#0274b6",
+      "via_google": true,
+      "feeds": [
+        {"category": "Business", "url": "https://news.google.com/rss/search?q=site:wsj.com+when:1d&hl=en-US&gl=US&ceid=US:en"}
+      ],
+      "frontpage_order": "newest"
+    },
+    {
+      "id": "guardian",
+      "name": "The Guardian",
+      "color": "#052962",
+      "via_google": true,
+      "feeds": [
+        {"category": "World", "url": "https://news.google.com/rss/search?q=site:theguardian.com+when:1d&hl=en-US&gl=US&ceid=US:en"}
+      ],
+      "homepage": "https://www.theguardian.com/us"
+    },
+    {
+      "id": "abc",
+      "name": "ABC News",
+      "color": "#000000",
+      "feeds": [
+        {"category": "Top", "url": "https://abcnews.go.com/abcnews/topstories"}
+      ],
+      "homepage": "https://abcnews.go.com/"
+    },
+    {
+      "id": "cbs",
+      "name": "CBS News",
+      "color": "#0a2a5e",
+      "feeds": [
+        {"category": "Top", "url": "https://www.cbsnews.com/latest/rss/main"}
+      ],
+      "homepage": "https://www.cbsnews.com/"
+    },
+    {
+      "id": "nbc",
+      "name": "NBC News",
+      "color": "#6460aa",
+      "feeds": [
+        {"category": "Top", "url": "https://feeds.nbcnews.com/nbcnews/public/news"}
+      ],
+      "homepage": "https://www.nbcnews.com/"
+    },
+    {
+      "id": "fox",
+      "name": "Fox News",
+      "color": "#003366",
+      "feeds": [
+        {"category": "Top", "url": "https://moxie.foxnews.com/google-publisher/latest.xml"}
+      ],
+      "homepage": "https://www.foxnews.com/"
+    },
+    {
+      "id": "aljazeera",
+      "name": "Al Jazeera",
+      "color": "#fa9000",
+      "feeds": [
+        {"category": "World", "url": "https://www.aljazeera.com/xml/rss/all.xml"}
+      ],
+      "homepage": "https://www.aljazeera.com/"
+    },
+    {
+      "id": "politico",
+      "name": "Politico",
+      "color": "#dc0d14",
+      "feeds": [
+        {"category": "Politics", "url": "https://rss.politico.com/congress.xml"},
+        {"category": "Politics", "url": "https://rss.politico.com/politics-news.xml"},
+        {"category": "Politics", "url": "https://news.google.com/rss/search?q=site:politico.com+when:1d&hl=en-US&gl=US&ceid=US:en", "via_google": true}
+      ],
+      "frontpage_order": "newest"
+    },
+    {
+      "id": "cnbc",
+      "name": "CNBC",
+      "color": "#005594",
+      "feeds": [
+        {"category": "Business", "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html"}
+      ],
+      "homepage": "https://www.cnbc.com/"
+    },
+    {
+      "id": "verge",
+      "name": "The Verge",
+      "color": "#5200ff",
+      "feeds": [
+        {"category": "Tech", "url": "https://www.theverge.com/rss/index.xml"}
+      ],
+      "homepage": "https://www.theverge.com/"
+    },
+    {
+      "id": "ars",
+      "name": "Ars Technica",
+      "color": "#ff4e00",
+      "feeds": [
+        {"category": "Tech", "url": "https://feeds.arstechnica.com/arstechnica/index"}
+      ],
+      "homepage": "https://arstechnica.com/"
+    },
+    {
+      "id": "techcrunch",
+      "name": "TechCrunch",
+      "color": "#0a9e01",
+      "feeds": [
+        {"category": "Tech", "url": "https://techcrunch.com/feed/"}
+      ],
+      "homepage": "https://techcrunch.com/"
+    },
+    {
+      "id": "espn",
+      "name": "ESPN",
+      "color": "#d00000",
+      "feeds": [
+        {"category": "Sports", "url": "https://www.espn.com/espn/rss/news"}
+      ]
+    }
+  ]
+}

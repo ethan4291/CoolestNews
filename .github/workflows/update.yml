@@ -1,0 +1,47 @@
+# Rebuilds NewsHub with fresh news and publishes it to GitHub Pages.
+name: Update news
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # every 15 minutes (GitHub may run it a bit late when busy)
+  push:
+    branches: [main]
+  workflow_dispatch:          # lets you click "Run workflow" on the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Fetch the news and build the site
+        run: python build.py
+        env:
+          PAGES_URL: ${{ steps.pages.outputs.base_url }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

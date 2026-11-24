@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NewsHub</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
+<style>
+  :root {
+    --bg: #f6f5f1; --panel: #ffffff; --text: #17171a; --muted: #6b6b73; --line: #e4e2dc;
+    --accent: #c8102e; --hover: #efede7; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.04);
+    --serif: "Iowan Old Style", "Charter", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  }
+  [data-theme="dark"] {
+    --bg: #111113; --panel: #1b1b1f; --text: #ececef; --muted: #9a9aa3; --line: #2b2b31;
+    --accent: #ff5a6e; --hover: #24242a; --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  header { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent);
+           backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .bar { display: flex; align-items: center; gap: 16px; padding: 12px 24px; }
+  .logo { font-family: var(--serif); font-size: 26px; font-weight: 700; letter-spacing: -.5px; white-space: nowrap; }
+  .logo span { color: var(--accent); }
+  .date { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .search { flex: 1; max-width: 520px; margin-left: auto; position: relative; }
+  .search input { width: 100%; padding: 9px 14px 9px 34px; border-radius: 10px; border: 1px solid var(--line);
+                  background: var(--panel); color: var(--text); font-size: 14px; outline: none; }
+  .search input:focus { border-color: var(--accent); }
+  .search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .icon-btn { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; height: 38px; min-width: 38px;
+              display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 10px; font-size: 13px; }
+  .icon-btn:hover { background: var(--hover); }
+  .spin svg { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  nav.tabs { display: flex; gap: 4px; padding: 0 24px; overflow-x: auto; scrollbar-width: none; }
+  nav.tabs button { border: 0; background: none; padding: 10px 12px; font-size: 14px; color: var(--muted);
+                    border-bottom: 2px solid transparent; white-space: nowrap; }
+  nav.tabs button:hover { color: var(--text); }
+  nav.tabs button.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+
+  .layout { display: grid; grid-template-columns: 230px 1fr; gap: 28px; padding: 24px; max-width: 1500px; margin: 0 auto; }
+  aside { position: sticky; top: 120px; align-self: start; max-height: calc(100vh - 140px); overflow-y: auto; }
+  aside h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 0 0 8px;
+             display: flex; justify-content: space-between; align-items: center; }
+  aside h3 button { border: 0; background: none; color: var(--accent); font-size: 11px; text-transform: none; letter-spacing: 0; padding: 0; }
+  .src { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 8px; font-size: 14px; cursor: pointer; user-select: none; }
+  .src:hover { background: var(--hover); }
+  .src .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .src .n { margin-left: auto; color: var(--muted); font-size: 12px; }
+  [data-theme="dark"] .src .dot, [data-theme="dark"] .badge { box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+  .src.off { opacity: .38; }
+  .src.err .n::after { content: " ⚠"; }
+  .opts { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--muted); }
+  .opts label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--panel); }
+  .seg button { border: 0; background: none; padding: 5px 12px; font-size: 13px; color: var(--muted); }
+  .seg button.on { background: var(--text); color: var(--bg); font-weight: 600; }
+  .site-note { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px;
+               font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .site-note a { color: var(--accent); }
+  .rank { font-weight: 700; color: var(--text); }
+  .src .only { display: none; margin-left: auto; border: 0; background: var(--line); border-radius: 5px; font-size: 11px; padding: 1px 7px; }
+  .src:hover .only { display: inline-block; }
+  .src:hover .n { display: none; }
+  .src .live { width: 6px; height: 6px; border-radius: 50%; background: #2bb24c; flex: none; }
+  .meta-line { color: var(--muted); font-size: 13px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; background: var(--panel); border-radius: 14px;
+          overflow: hidden; box-shadow: var(--shadow); margin-bottom: 24px; border: 1px solid var(--line); }
+  .hero img { width: 100%; height: 100%; min-height: 300px; max-height: 420px; object-fit: cover; display: block; }
+  .hero .body { padding: 28px 28px 28px 0; display: flex; flex-direction: column; justify-content: center; }
+  .hero h2 { font-family: var(--serif); font-size: 32px; line-height: 1.15; margin: 10px 0 12px; letter-spacing: -.3px; }
+  .hero p { color: var(--muted); font-size: 16px; line-height: 1.5; margin: 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+          display: flex; flex-direction: column; box-shadow: var(--shadow); transition: transform .15s, box-shadow .15s; position: relative; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.08); }
+  .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--hover); }
+  .card .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card h3 { font-family: var(--serif); font-size: 19px; line-height: 1.25; margin: 0; }
+  .card p { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 0; display: -webkit-box;
+            -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .read h3, .read h2 { color: var(--muted); }
+
+  .list .grid { grid-template-columns: 1fr; gap: 0; }
+  .list .card { flex-direction: row; border-radius: 0; border: 0; border-bottom: 1px solid var(--line); box-shadow: none; background: none; }
+  .list .card:hover { transform: none; background: var(--hover); box-shadow: none; }
+  .list .card img { width: 150px; aspect-ratio: 4/3; flex: none; border-radius: 8px; margin: 12px 0 12px 12px; }
+  .list .card p { -webkit-line-clamp: 2; }
+  .list .hero { display: none; }
+
+  .tag { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .badge { color: #fff; padding: 2px 7px; border-radius: 5px; font-weight: 600; font-size: 11px; letter-spacing: .2px; }
+  .star { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; border: 0;
+          background: rgba(0,0,0,.55); color: #fff; font-size: 16px; display: grid; place-items: center; opacity: 0; transition: opacity .15s; }
+  .card:hover .star, .star.on { opacity: 1; }
+  .star.on { color: #ffcc33; }
+  .list .star { position: static; margin: auto 14px auto 0; background: none; color: var(--muted); opacity: 1; flex: none; }
+  .list .star.on { color: #e6a800; }
+
+  .empty { text-align: center; color: var(--muted); padding: 80px 20px; }
+  .more { display: block; margin: 28px auto 0; padding: 10px 22px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); }
+  .skeleton { height: 280px; border-radius: 12px; background: linear-gradient(90deg, var(--panel), var(--hover), var(--panel));
+              background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; padding: 16px; }
+    aside { position: static; max-height: none; display: flex; flex-wrap: wrap; gap: 4px; }
+    aside h3, .opts { width: 100%; }
+    .src .n { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero .body { padding: 0 20px 22px; }
+    .hero h2 { font-size: 24px; }
+    .date { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="logo">News<span>Hub</span></div>
+    <div class="date" id="today"></div>
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" placeholder="Search headlines…  ( / )" autocomplete="off">
+    </div>
+    <button class="icon-btn" id="layoutBtn" title="Toggle grid / list"></button>
+    <button class="icon-btn" id="themeBtn" title="Toggle dark mode"></button>
+    <button class="icon-btn" id="refreshBtn" title="Refresh news">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+    </button>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<div class="layout">
+  <aside>
+    <h3>Sources <button id="toggleAll">Select none</button></h3>
+    <div id="sources"></div>
+    <div class="opts">
+      <label><input type="checkbox" id="hideRead"> Hide articles I've read</label>
+      <label><input type="checkbox" id="imagesOnly"> Only stories with images</label>
+    </div>
+  </aside>
+  <main id="main">
+    <div class="meta-line"><span id="status">Loading the news…</span>
+      <span style="display:flex;gap:14px;align-items:center"><span id="updated"></span>
+        <span class="seg" id="sortSeg"><button data-sort="front" title="Same order as each site's own front page">Front page</button><button data-sort="latest" title="Newest first">Latest</button></span></span></div>
+    <div id="note"></div>
+    <div id="feed"></div>
+  </main>
+</div>
+
+<script>
+const CATEGORIES = ["All", "Top", "World", "US", "Politics", "Business", "Tech", "Science", "Sports", "Saved"];
+const PAGE = 60;
+const store = {
+  get: (k, d) => { try { return JSON.parse(localStorage.getItem("newshub:" + k)) ?? d; } catch { return d; } },
+  set: (k, v) => localStorage.setItem("newshub:" + k, JSON.stringify(v)),
+};
+
+const state = {
+  data: null,
+  tab: store.get("tab", "All"),
+  hidden: new Set(store.get("hidden", [])),
+  saved: store.get("saved", {}),            // link -> article
+  read: new Set(store.get("read", [])),
+  theme: store.get("theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+  layout: store.get("layout", "grid"),
+  hideRead: store.get("hideRead", false),
+  imagesOnly: store.get("imagesOnly", false),
+  sort: store.get("sort", "front"),
+  q: "",
+  limit: PAGE,
+};
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function ago(ts, dateOnly) {
+  if (!ts) return "";
+  if (dateOnly) {   // only the day is known (taken from the story's URL)
+    const d = new Date(ts * 1000), today = new Date();
+    const days = Math.round((new Date(today.toDateString()) - new Date(d.toDateString())) / 864e5);
+    return days <= 0 ? "Today" : days === 1 ? "Yesterday" : d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  }
+  const s = Date.now() / 1000 - ts;
+  if (s < 60) return "just now";
+  if (s < 3600) return Math.floor(s / 60) + "m ago";
+  if (s < 86400) return Math.floor(s / 3600) + "h ago";
+  if (s < 86400 * 7) return Math.floor(s / 86400) + "d ago";
+  return new Date(ts * 1000).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function sourceById(id) { return state.data?.sources.find((s) => s.id === id) || { name: id, color: "#666" }; }
+
+async function load(refresh = false) {
+  $("refreshBtn").classList.add("spin");
+  try {
+    // news.json works both on GitHub Pages (a file the build writes) and with server.py (served live)
+    const r = await fetch("news.json?" + (refresh ? "refresh=1&" : "") + "t=" + Date.now());
+    state.data = await r.json();
+    renderSources();
+    render();
+  } catch (e) {
+    $("status").textContent = "Couldn't load the news. Check your connection and try ↻ again.";
+  } finally {
+    $("refreshBtn").classList.remove("spin");
+  }
+}
+
+function visibleArticles() {
+  if (state.tab === "Saved") {
+    return Object.values(state.saved).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).filter(matchesSearch);
+  }
+  const list = (state.data?.articles || []).filter((a) =>
+    !state.hidden.has(a.source) &&
+    (state.tab === "All" || a.categories.includes(state.tab)) &&
+    (!state.hideRead || !state.read.has(a.link)) &&
+    (!state.imagesOnly || a.image) &&
+    matchesSearch(a));
+  if (state.sort === "front") {
+    // Same order as the real sites: each outlet's #1 story, then each #2, ... then everything else by time
+    const order = Object.fromEntries(state.data.sources.map((s, i) => [s.id, i]));
+    const ranked = list.filter((a) => a.rank).sort((a, b) => a.rank - b.rank || order[a.source] - order[b.source]);
+    return ranked.concat(list.filter((a) => !a.rank));
+  }
+  return list;
+}
+
+function matchesSearch(a) {
+  if (!state.q) return true;
+  const hay = (a.title + " " + a.summary + " " + sourceById(a.source).name).toLowerCase();
+  return state.q.toLowerCase().split(/\s+/).every((w) => hay.includes(w));
+}
+
+function tagHtml(a) {
+  const s = sourceById(a.source);
+  const rank = state.sort === "front" && a.rank ? `<span class="rank" title="Position on ${esc(s.name)}'s front page">#${a.rank}</span>` : "";
+  return `<div class="tag"><span class="badge" style="background:${esc(s.color)}">${esc(s.name)}</span>${rank}${ago(a.published, a.date_only)}</div>`;
+}
+
+function imageFor(a) {
+  if (a.image) return a.image;
+  if (a.link.includes("news.google.com") || state.data?.static) return null;
+  return "/api/thumb?u=" + encodeURIComponent(a.link);   // server looks up the story's share image
+}
+
+function cardHtml(a, i) {
+  const saved = !!state.saved[a.link];
+  return `<a class="card ${state.read.has(a.link) ? "read" : ""}" href="${esc(a.link)}" target="_blank" rel="noopener" data-i="${i}">
+      ${imageFor(a) ? `<img loading="lazy" src="${esc(imageFor(a))}" alt="" onerror="this.remove()">` : ""}
+      <div class="body">${tagHtml(a)}<h3>${esc(a.title)}</h3>${a.summary ? `<p>${esc(a.summary)}</p>` : ""}</div>
+      <button class="star ${saved ? "on" : ""}" data-save="${i}" title="${saved ? "Unsave" : "Save for later"}">${saved ? "★" : "☆"}</button>
+    </a>`;
+}
+
+let current = [];
+function render() {
+  document.documentElement.dataset.theme = state.theme;
+  $("themeBtn").textContent = state.theme === "dark" ? "☀️" : "🌙";
+  $("layoutBtn").textContent = state.layout === "grid" ? "☰" : "▦";
+  $("main").classList.toggle("list", state.layout === "list");
+  $("hideRead").checked = state.hideRead;
+  $("imagesOnly").checked = state.imagesOnly;
+  $("tabs").innerHTML = CATEGORIES.map((c) =>
+    `<button class="${c === state.tab ? "active" : ""}" data-tab="${c}">${c === "Saved" ? `★ Saved (${Object.keys(state.saved).length})` : c}</button>`).join("");
+  document.querySelectorAll("#sortSeg button").forEach((b) => b.classList.toggle("on", b.dataset.sort === state.sort));
+  if (!state.data) return;
+  const visible = state.data.sources.filter((s) => !state.hidden.has(s.id));
+  let note = "";
+  if (visible.length === 1 && state.sort === "front" && state.tab !== "Saved") {
+    const s = visible[0];
+    const site = s.homepage ? `<a href="${esc(s.homepage)}" target="_blank" rel="noopener">${esc(new URL(s.homepage).hostname.replace("www.", ""))}</a>` : esc(s.name);
+    note = s.frontpage === "live"
+      ? `Showing ${site}'s front page: same stories, same order, same headlines as the site right now.`
+      : s.frontpage_order === "newest"
+        ? `${esc(s.name)} blocks NewsHub from reading its homepage and has no homepage feed, so these are its newest stories first, from all of its feeds.`
+        : `${esc(s.name)} blocks NewsHub from reading its homepage, so this is ${esc(s.name)}'s own homepage feed, in its order: very close to the front page, but not guaranteed identical.`;
+  }
+  $("note").innerHTML = note ? `<div class="site-note">${note}</div>` : "";
+
+  current = visibleArticles();
+  const shown = current.slice(0, state.limit);
+  $("status").textContent = `${current.length} ${current.length === 1 ? "story" : "stories"}` + (state.q ? ` matching “${state.q}”` : "");
+  $("updated").textContent = "Updated " + ago(state.data.fetched);
+
+  if (!shown.length) {
+    $("feed").innerHTML = `<div class="empty">${state.tab === "Saved" ? "Nothing saved yet. Tap ☆ on any story to keep it here." : "No stories match. Try another category or turn on more sources."}</div>`;
+    return;
+  }
+  let html = "";
+  let rest = shown;
+  const heroIdx = state.tab !== "Saved" && !state.q ? shown.findIndex((a) => a.image) : -1;
+  if (heroIdx >= 0 && heroIdx < 5) {
+    const h = shown[heroIdx];
+    html += `<a class="hero ${state.read.has(h.link) ? "read" : ""}" href="${esc(h.link)}" target="_blank" rel="noopener" data-i="${heroIdx}">
+        <img src="${esc(h.image)}" alt="" onerror="this.style.display='none'">
+        <div class="body">${tagHtml(h)}<h2>${esc(h.title)}</h2>${h.summary ? `<p>${esc(h.summary)}</p>` : ""}</div></a>`;
+  }
+  html += `<div class="grid">${shown.map((a, i) => (i === heroIdx && html ? "" : cardHtml(a, i))).join("")}</div>`;
+  if (current.length > shown.length) html += `<button class="more" id="more">Show more (${current.length - shown.length} left)</button>`;
+  $("feed").innerHTML = html;
+}
+
+function renderSources() {
+  const counts = {};
+  for (const a of state.data.articles) counts[a.source] = (counts[a.source] || 0) + 1;
+  $("sources").innerHTML = state.data.sources.map((s) =>
+    `<div class="src ${state.hidden.has(s.id) ? "off" : ""} ${s.failed && !s.ok ? "err" : ""}" data-src="${s.id}"
+          title="${s.failed ? s.failed + " feed(s) failed to load" : "Click to toggle"}">
+       <span class="dot" style="background:${esc(s.color)}"></span>${esc(s.name)}${s.frontpage === "live" ? '<span class="live" title="Matches the live front page"></span>' : ""}
+       <span class="n">${counts[s.id] || 0}</span><button class="only" data-only="${s.id}">only</button></div>`).join("");
+  $("toggleAll").textContent = state.hidden.size ? "Select all" : "Select none";
+}
+
+// --- events ---
+$("tabs").addEventListener("click", (e) => {
+  const t = e.target.closest("[data-tab]"); if (!t) return;
+  state.tab = t.dataset.tab; state.limit = PAGE; store.set("tab", state.tab); render(); scrollTo({ top: 0 });
+});
+$("sources").addEventListener("click", (e) => {
+  const s = e.target.closest("[data-src]"); if (!s) return;
+  const id = s.dataset.src;
+  if (e.target.closest("[data-only]") || e.metaKey || e.altKey) { // ⌘/⌥-click: show only this source
+    state.hidden = new Set(state.data.sources.map((x) => x.id).filter((x) => x !== id));
+  } else {
+    state.hidden.has(id) ? state.hidden.delete(id) : state.hidden.add(id);
+  }
+  store.set("hidden", [...state.hidden]); state.limit = PAGE; renderSources(); render();
+});
+$("toggleAll").addEventListener("click", () => {
+  state.hidden = state.hidden.size ? new Set() : new Set(state.data.sources.map((s) => s.id));
+  store.set("hidden", [...state.hidden]); renderSources(); render();
+});
+$("feed").addEventListener("click", (e) => {
+  const star = e.target.closest("[data-save]");
+  if (star) {
+    e.preventDefault(); e.stopPropagation();
+    const a = current[+star.dataset.save];
+    if (state.saved[a.link]) delete state.saved[a.link]; else state.saved[a.link] = { ...a, savedAt: Date.now() };
+    store.set("saved", state.saved); render(); return;
+  }
+  if (e.target.id === "more") { state.limit += PAGE; render(); return; }
+  const link = e.target.closest("[data-i]");
+  if (link) {
+    state.read.add(current[+link.dataset.i].link);
+    store.set("read", [...state.read].slice(-3000));
+    setTimeout(render, 300);
+  }
+});
+let qTimer;
+$("q").addEventListener("input", (e) => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = e.target.value.trim(); state.limit = PAGE; render(); }, 150); });
+$("themeBtn").onclick = () => { state.theme = state.theme === "dark" ? "light" : "dark"; store.set("theme", state.theme); render(); };
+$("layoutBtn").onclick = () => { state.layout = state.layout === "grid" ? "list" : "grid"; store.set("layout", state.layout); render(); };
+$("refreshBtn").onclick = () => load(true);
+$("sortSeg").onclick = (e) => { const b = e.target.closest("[data-sort]"); if (!b) return; state.sort = b.dataset.sort; store.set("sort", state.sort); state.limit = PAGE; render(); };
+$("hideRead").onchange = (e) => { state.hideRead = e.target.checked; store.set("hideRead", state.hideRead); render(); };
+$("imagesOnly").onchange = (e) => { state.imagesOnly = e.target.checked; store.set("imagesOnly", state.imagesOnly); render(); };
+document.addEventListener("keydown", (e) => {
+  if (e.key === "/" && document.activeElement !== $("q")) { e.preventDefault(); $("q").focus(); }
+  if (e.key === "Escape") { $("q").value = ""; state.q = ""; $("q").blur(); render(); }
+});
+
+$("today").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+$("feed").innerHTML = `<div class="grid">${'<div class="skeleton"></div>'.repeat(6)}</div>`;
+render();
+load();
+setInterval(() => load(), 2 * 60 * 1000);    // check for new stories every 2 minutes
+setInterval(() => { if (state.data) $("updated").textContent = "Updated " + ago(state.data.fetched); }, 60 * 1000);
+</script>
+</body>
+</html>

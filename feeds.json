@@ -1,5 +1,5 @@
 {
-  "_comment": "'homepage' = the site's front page; NewsHub reads it so stories appear in the same order as on the real site. Sites that block this (NYT, WSJ, Washington Post, Politico, ESPN) use their first feed's order instead. 'via_google' feeds come from Google News because the outlet no longer publishes working RSS. 'frontpage_order': 'newest' ranks a blocked site's stories newest-first across all its feeds (used where the outlet has no homepage feed); otherwise its first feed's own order is used. A feed can set its own 'via_google': true.",
+  "_comment": "'homepage' = the site's front page; CoolestNews reads it so stories appear in the same order as on the real site. Sites that block this (NYT, WSJ, Washington Post, Politico, ESPN) use their first feed's order instead. 'via_google' feeds come from Google News because the outlet no longer publishes working RSS. 'frontpage_order': 'newest' ranks a blocked site's stories newest-first across all its feeds (used where the outlet has no homepage feed); otherwise its first feed's own order is used. A feed can set its own 'via_google': true.",
   "sources": [
     {
       "id": "nyt",

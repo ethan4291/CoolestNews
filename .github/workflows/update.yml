@@ -1,4 +1,4 @@
-# Rebuilds NewsHub with fresh news and publishes it to GitHub Pages.
+# Rebuilds CoolestNews with fresh news and publishes it to GitHub Pages.
 name: Update news
 
 on:

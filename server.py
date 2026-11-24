@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NewsHub - an all-in-one news reader.
+"""CoolestNews - an all-in-one news reader.
 
 Pulls RSS/Atom feeds from the sources in feeds.json, reads each outlet's
 homepage so stories keep the same order and headlines as the real site,
@@ -30,7 +30,7 @@ ROOT = Path(__file__).parent
 CACHE_SECONDS = 3 * 60          # how often to re-check every site
 MAX_AGE = 3 * 24 * 3600         # drop stories older than this (unless still on a front page)
 FRONTPAGE_MAX_AGE = 7 * 24 * 3600  # ...but never show front-page items older than a week
-USER_AGENT = "Mozilla/5.0 (Macintosh) NewsHub/1.0"
+USER_AGENT = "Mozilla/5.0 (Macintosh) CoolestNews/1.0"
 BROWSER_UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/130 Safari/537.36")
 
@@ -361,5 +361,5 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     threading.Thread(target=get_news, daemon=True).start()  # warm the cache
-    print(f"NewsHub running at http://localhost:{PORT}")
+    print(f"CoolestNews running at http://localhost:{PORT}")
     ThreadingHTTPServer(("127.0.0.1", PORT), Handler).serve_forever()

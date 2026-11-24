@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NewsHub</title>
+<title>CoolestNews</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
 <style>
   :root {
@@ -127,7 +127,7 @@
 <body>
 <header>
   <div class="bar">
-    <div class="logo">News<span>Hub</span></div>
+    <div class="logo">Coolest<span>News</span></div>
     <div class="date" id="today"></div>
     <div class="search">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -284,8 +284,8 @@ function render() {
     note = s.frontpage === "live"
       ? `Showing ${site}'s front page: same stories, same order, same headlines as the site right now.`
       : s.frontpage_order === "newest"
-        ? `${esc(s.name)} blocks NewsHub from reading its homepage and has no homepage feed, so these are its newest stories first, from all of its feeds.`
-        : `${esc(s.name)} blocks NewsHub from reading its homepage, so this is ${esc(s.name)}'s own homepage feed, in its order: very close to the front page, but not guaranteed identical.`;
+        ? `${esc(s.name)} blocks CoolestNews from reading its homepage and has no homepage feed, so these are its newest stories first, from all of its feeds.`
+        : `${esc(s.name)} blocks CoolestNews from reading its homepage, so this is ${esc(s.name)}'s own homepage feed, in its order: very close to the front page, but not guaranteed identical.`;
   }
   $("note").innerHTML = note ? `<div class="site-note">${note}</div>` : "";
 

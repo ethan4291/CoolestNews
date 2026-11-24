@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build NewsHub as a static site (for GitHub Pages).
+"""Build CoolestNews as a static site (for GitHub Pages).
 
 Fetches every feed and homepage once, looks up share images for stories that
 came without one, and writes:
